@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Book Store with Advanced Features</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+  }
+  header {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .dashboard {
+    background: white;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 1000px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .dashboard h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .stat-card h3 {
+    font-size: 2rem;
+    margin: 0 0 10px 0;
+  }
+
+  .stat-card p {
+    margin: 0;
+    opacity: 0.9;
+  }
+  .controls {
+    text-align: center;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  input, select, button {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+  }
+  .book {
+    background: white;
+    padding: 15px;
+    width: 230px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  .book h3 {
+    font-size: 1.1rem;
+  }
+  .book p {
+    font-size: 0.9rem;
+    margin: 5px 0;
+  }
+  .book button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .book button:hover {
+    background: #0056b3;
+  }
+  .cart {
+    background: white;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .cart h2 {
+    text-align: center;
+  }
+  .cart ul {
+    list-style: none;
+    padding: 0;
+  }
+  .cart li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+  }
+  .cart li span {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  .total, .actions {
+    text-align: center;
+    margin-top: 10px;
+  }
+  .remove-btn {
+    background: red;
+    color: white;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .remove-btn:hover {
+    background: darkred;
+  }
+  .advanced-features {
+    background: white;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 1000px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+
+  .advanced-features h2 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .feature-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .feature-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .feature-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+
+  .feature-btn:active {
+    transform: translateY(0);
+  }
+
+  .edit-rating-btn {
+    background: #f39c12 !important;
+    transition: all 0.3s ease;
+  }
+
+  .edit-rating-btn:hover {
+    background: #e67e22 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .edit-rating-btn:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 600px) {
+    main {
+      margin: 1rem;
+      padding: 1rem;
+    }
+    .filter-section {
+      flex-direction: column;
+    }
+  }
+
+  /* Flashlight effect overlay */
+#flashlight-overlay {
+  pointer-events: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  background: radial-gradient(circle 120px at var(--x, 50vw) var(--y, 50vh), transparent 0 120px, rgba(0,0,0,0.7) 150px);
+  transition: background 0.1s;
+  mix-blend-mode: multiply;
+}
+body:not(.flashlight-on) #flashlight-overlay {
+  display: none;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background: #181818;
+  color: #f4f4f4;
+}
+body.dark-mode header,
+body.dark-mode .dashboard,
+body.dark-mode .advanced-features,
+body.dark-mode .cart,
+body.dark-mode .modal-content {
+  background: #23272f !important;
+  color: #f4f4f4 !important;
+}
+body.dark-mode .stat-card {
+  background: linear-gradient(135deg, #23272f 0%, #3a3f4b 100%) !important;
+  color: #fff !important;
+}
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode button {
+  background: #23272f;
+  color: #f4f4f4;
+  border-color: #444;
+}
+body.dark-mode .feature-btn {
+  background: linear-gradient(135deg, #23272f 0%, #3a3f4b 100%) !important;
+  color: #fff !important;
+}
+body.dark-mode .remove-btn {
+  background: #c0392b !important;
+}
+</style>
+</head>
+<body>
+
+<header>📚  Book Store </header>
+<!-- Add this just after <header> or before your dashboard -->
+<div style="text-align:center; margin: 20px;">
+  <label for="lang-select" style="font-weight:bold;">🌐 Language: </label>
+  <select id="lang-select">
+    <option value="en">English</option>
+    <option value="hi">हिन्दी</option>
+    <option value="ta">தமிழ்</option>
+    <option value="te">తెలుగు</option>
+    <option value="bn">বাংলা</option>
+  </select>
+</div>
+<!-- Add after language selector -->
+<div style="text-align:center; margin-bottom: 10px;">
+  <button id="theme-toggle" class="feature-btn" style="padding:8px 20px;">🌙 Dark Mode</button>
+</div>
+<!--desh board -->
+
+<div class="dashboard">
+  <h2>📊 Dashboard</h2>
+  <div class="stats">
+    <div class="stat-card">
+      <h3 id="total-books">0</h3>
+      <p>Total Books</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="cart-count">0</h3>
+      <p>Items in Cart</p>
+    </div>
+    <div class="stat-card">
+      <h3>₹<span id="dashboard-total">0</span></h3>
+      <p>Cart Value</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="book-types">0</h3>
+      <p>Book Categories</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="order-count">0</h3>
+      <p>Orders Placed</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="favorite-count">0</h3>
+      <p>Favorite Books</p>
+    </div>
+  </div>
+</div>
+
+
+
+<!--<div class="advanced-features">
+  <h2>🚀 Advanced Features</h2>
+  <div class="feature-buttons">
+    <button onclick="showFavorites()" class="feature-btn">💖 Show Favorites</button>
+    <button onclick="getRecommendations()" class="feature-btn">🎯 Get Recommendations</button>
+    <button onclick="showOrderHistory()" class="feature-btn">📋 Order History</button>
+    <button onclick="trackOrder()" class="feature-btn">📦 Track Order</button>
+    <button onclick="returnOrder()" class="feature-btn">↩️ Return Order</button>
+    <button onclick="renderBooks(books)" class="feature-btn">📚 Show All Books</button>
+    <button onclick="showAllOrders()" class="feature-btn">🗂 Show All Orders</button>
+  </div>
+</div>-->
+<!--show the oll advanced features in the modal--->
+<div class="advanced-features">
+  <h2>🚀 Advanced Features</h2>
+  <div class="feature-buttons">
+    <button onclick="showAdvancedFeatures()" class="feature-btn" style="font-size:16px; padding:16px 32px;">🚀 Advanced Features</button>
+  </div>
+</div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="Search books..." />
+  <select id="sort">
+    <option value="">Sort by</option>
+    <option value="asc">Price: Low to High</option>
+    <option value="desc">Price: High to Low</option>
+    <option value="rating">Rating: High to Low</option>
+  </select>
+  <select id="category-filter">
+    <option value="">All Categories</option>
+    <option value="Programming">Programming</option>
+    <option value="Software Engineering">Software Engineering</option>
+    <option value="Development">Development</option>
+    <option value="Testing">Testing</option>
+    <option value="Mathematics">Mathematics</option>
+    <option value="English Literature">English Literature</option>
+    <option value="History">History</option>
+    <option value="Geography">Geography</option>
+    <option value="Science">Science</option>
+  </select>
+</div>
+
+<div class="container" id="book-list">
+  <!-- Books will appear here -->
+</div>
+
+<div class="cart">
+  <h2>🛒 Cart</h2>
+  <ul id="cart-items"></ul>
+  <div class="total">Total: ₹<span id="total-price">0</span></div>
+  <div class="actions">
+    <button onclick="clearCart()">🗑 Clear Cart</button>
+    <button onclick="checkout()">✅ Purchase</button>
+  </div>
+</div>
+
+<!-- Comments Modal -->
+<div id="comments-modal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeCommentsModal()">&times;</span>
+    <h3>Comments</h3>
+    <ul id="comments-list"></ul>
+    <textarea id="new-comment" placeholder="Add a comment..."></textarea>
+    <button onclick="addComment()">Add Comment</button>
+  </div>
+</div>
+
+<!-- Flashlight overlay -->
+<div id="flashlight-overlay"></div>
+
+<script>
+// Language translations
+const translations = {
+  en: {
+    dashboard: "📊 Dashboard",
+    totalBooks: "Total Books",
+    itemsInCart: "Items in Cart",
+    cartValue: "Cart Value",
+    bookCategories: "Book Categories",
+    ordersPlaced: "Orders Placed",
+    favoriteBooks: "Favorite Books",
+    advancedFeatures: "🚀 Advanced Features",
+    searchPlaceholder: "Search books...",
+    sortBy: "Sort by",
+    priceLowHigh: "Price: Low to High",
+    priceHighLow: "Price: High to Low",
+    ratingHighLow: "Rating: High to Low",
+    allCategories: "All Categories",
+    programming: "Programming",
+    softwareEngineering: "Software Engineering",
+    development: "Development",
+    testing: "Testing",
+    mathematics: "Mathematics",
+    englishLiterature: "English Literature",
+    history: "History",
+    geography: "Geography",
+    science: "Science",
+    cart: "🛒 Cart",
+    total: "Total",
+    clearCart: "🗑 Clear Cart",
+    purchase: "✅ Purchase",
+    comments: "Comments",
+    addComment: "Add Comment",
+    language: "🌐 Language: "
+  },
+   hi: {
+    dashboard: "📊 डैशबोर्ड",
+    totalBooks: "कुल पुस्तकें",
+    itemsInCart: "कार्ट में आइटम",
+    cartValue: "कार्ट मूल्य",
+    bookCategories: "पुस्तक श्रेणियाँ",
+    ordersPlaced: "किए गए ऑर्डर",
+    favoriteBooks: "पसंदीदा पुस्तकें",
+    advancedFeatures: "🚀 उन्नत सुविधाएँ",
+    searchPlaceholder: "पुस्तकें खोजें...",
+    sortBy: "क्रमबद्ध करें",
+    priceLowHigh: "कीमत: कम से अधिक",
+    priceHighLow: "कीमत: अधिक से कम",
+    ratingHighLow: "रेटिंग: उच्च से निम्न",
+    allCategories: "सभी श्रेणियाँ",
+    programming: "प्रोग्रामिंग",
+    softwareEngineering: "सॉफ्टवेयर इंजीनियरिंग",
+    development: "डेवलपमेंट",
+    testing: "टेस्टिंग",
+    mathematics: "गणित",
+    englishLiterature: "अंग्रेज़ी साहित्य",
+    history: "इतिहास",
+    geography: "भूगोल",
+    science: "विज्ञान",
+    cart: "🛒 कार्ट",
+    total: "कुल",
+    clearCart: "🗑 कार्ट साफ़ करें",
+    purchase: "✅ खरीदें",
+    comments: "टिप्पणियाँ",
+    addComment: "टिप्पणी जोड़ें",
+    language: "🌐 भाषा: "
+  },
+   ta: {
+    dashboard: "📊 கட்டுப்பாட்டு பலகை",
+    totalBooks: "மொத்த புத்தகங்கள்",
+    itemsInCart: "வண்டியில் உள்ள பொருட்கள்",
+    cartValue: "வண்டி மதிப்பு",
+    bookCategories: "புத்தக வகைகள்",
+    ordersPlaced: "வைக்கப்பட்ட ஆர்டர்கள்",
+    favoriteBooks: "பிடித்த புத்தகங்கள்",
+    advancedFeatures: "🚀 மேம்பட்ட அம்சங்கள்",
+    searchPlaceholder: "புத்தகங்களைத் தேடு...",
+    sortBy: "வரிசைப்படுத்து",
+    priceLowHigh: "விலை: குறைந்தது முதல் அதிகம்",
+    priceHighLow: "விலை: அதிகம் முதல் குறைந்தது",
+    ratingHighLow: "மதிப்பீடு: அதிகம் முதல் குறைந்தது",
+    allCategories: "அனைத்து வகைகள்",
+    programming: "நிரலாக்கம்",
+    softwareEngineering: "மென்பொருள் பொறியியல்",
+    development: "டெவலப்மெண்ட்",
+    testing: "சோதனை",
+    mathematics: "கணிதம்",
+    englishLiterature: "ஆங்கில இலக்கியம்",
+    history: "வரலாறு",
+    geography: "புவியியல்",
+    science: "அறிவியல்",
+    cart: "🛒 வண்டி",
+    total: "மொத்தம்",
+    clearCart: "🗑 வண்டியை அழி",
+    purchase: "✅ வாங்கு",
+    comments: "கருத்துகள்",
+    addComment: "கருத்து சேர்க்கவும்",
+    language: "🌐 மொழி: "
+  },
+  te: {
+  dashboard: "📊 డాష్‌బోర్డ్",
+  totalBooks: "మొత్తం పుస్తకాలు",
+  itemsInCart: "కార్టులో అంశాలు",
+  cartValue: "కార్ట్ విలువ",
+  bookCategories: "పుస్తక విభాగాలు",
+  ordersPlaced: "ఆర్డర్లు పెట్టారు",
+  favoriteBooks: "ఇష్టమైన పుస్తకాలు",
+  advancedFeatures: "🚀 అధునాతన ఫీచర్లు",
+  searchPlaceholder: "పుస్తకాలను వెతకండి...",
+  sortBy: "వర్గీకరించు",
+  priceLowHigh: "ధర: తక్కువ నుండి ఎక్కువ",
+  priceHighLow: "ధర: ఎక్కువ నుండి తక్కువ",
+  ratingHighLow: "రేటింగ్: ఎక్కువ నుండి తక్కువ",
+  allCategories: "అన్ని విభాగాలు",
+  programming: "ప్రోగ్రామింగ్",
+  softwareEngineering: "సాఫ్ట్‌వేర్ ఇంజినీరింగ్",
+  development: "డెవలప్‌మెంట్",
+  testing: "టెస్టింగ్",
+  mathematics: "గణితం",
+  englishLiterature: "ఆంగ్ల సాహిత్యం",
+  history: "చరిత్ర",
+  geography: "భూగోళశాస్త్రం",
+  science: "సైన్స్",
+  cart: "🛒 కార్ట్",
+  total: "మొత్తం",
+  clearCart: "🗑 కార్ట్ క్లియర్ చేయండి",
+  purchase: "✅ కొనండి",
+  comments: "వ్యాఖ్యలు",
+  addComment: "వ్యాఖ్యను జోడించండి",
+  language: "🌐 భాష: "
+},
+bn: {
+  dashboard: "📊 ড্যাশবোর্ড",
+  totalBooks: "মোট বই",
+  itemsInCart: "কার্টে আইটেম",
+  cartValue: "কার্ট মূল্য",
+  bookCategories: "বইয়ের বিভাগ",
+  ordersPlaced: "অর্ডার হয়েছে",
+  favoriteBooks: "প্রিয় বই",
+  advancedFeatures: "🚀 উন্নত বৈশিষ্ট্য",
+  searchPlaceholder: "বই অনুসন্ধান করুন...",
+  sortBy: "সাজান",
+  priceLowHigh: "দাম: কম থেকে বেশি",
+  priceHighLow: "দাম: বেশি থেকে কম",
+  ratingHighLow: "রেটিং: বেশি থেকে কম",
+  allCategories: "সব বিভাগ",
+  programming: "প্রোগ্রামিং",
+  softwareEngineering: "সফটওয়্যার ইঞ্জিনিয়ারিং",
+  development: "ডেভেলপমেন্ট",
+  testing: "টেস্টিং",
+  mathematics: "গণিত",
+  englishLiterature: "ইংরেজি সাহিত্য",
+  history: "ইতিহাস",
+  geography: "ভূগোল",
+  science: "বিজ্ঞান",
+  cart: "🛒 কার্ট",
+  total: "মোট",
+  clearCart: "🗑 কার্ট পরিষ্কার করুন",
+  purchase: "✅ কিনুন",
+  comments: "মন্তব্য",
+  addComment: "মন্তব্য যোগ করুন",
+  language: "🌐 ভাষা: "
+}
+}
+
+  function updateLanguageUI(lang) {
+  const t = translations[lang] || translations.en;
+  document.querySelector('.dashboard h2').textContent = t.dashboard;
+  document.querySelector('#total-books').nextElementSibling.textContent = t.totalBooks;
+  document.querySelector('#cart-count').nextElementSibling.textContent = t.itemsInCart;
+  document.querySelector('#dashboard-total').parentElement.nextElementSibling.textContent = t.cartValue;
+  document.querySelector('#book-types').nextElementSibling.textContent = t.bookCategories;
+  document.querySelector('#order-count').nextElementSibling.textContent = t.ordersPlaced;
+  document.querySelector('#favorite-count').nextElementSibling.textContent = t.favoriteBooks;
+  document.querySelector('.advanced-features h2').textContent = t.advancedFeatures;
+  document.getElementById('search').placeholder = t.searchPlaceholder;
+  document.querySelector('label[for="lang-select"]').textContent = t.language;
+  // Update sort and category filter options
+  const sort = document.getElementById('sort');
+  sort.options[0].text = t.sortBy;
+  sort.options[1].text = t.priceLowHigh;
+  sort.options[2].text = t.priceHighLow;
+  sort.options[3].text = t.ratingHighLow;
+  const cat = document.getElementById('category-filter');
+  cat.options[0].text = t.allCategories;
+  cat.options[1].text = t.programming;
+  cat.options[2].text = t.softwareEngineering;
+  cat.options[3].text = t.development;
+  cat.options[4].text = t.testing;
+  cat.options[5].text = t.mathematics;
+  cat.options[6].text = t.englishLiterature;
+  cat.options[7].text = t.history;
+  cat.options[8].text = t.geography;
+  cat.options[9].text = t.science;
+  // Cart
+  document.querySelector('.cart h2').textContent = t.cart;
+  document.querySelector('.total').childNodes[0].textContent = t.total + ": ₹";
+  document.querySelector('.actions button').textContent = t.clearCart;
+  document.querySelector('.actions button:nth-child(2)').textContent = t.purchase;
+  // Comments Modal
+  document.querySelector('#comments-modal h3').textContent = t.comments;
+  document.getElementById('new-comment').placeholder = t.addComment + "...";
+  document.querySelector('#comments-modal button').textContent = t.addComment;
+}
+
+// Listen for language change
+document.getElementById("lang-select").addEventListener("change", function() {
+  const lang = this.value;
+  updateLanguageUI(lang);
+  alert("Language switched to: " + this.options[this.selectedIndex].text);
+});
+updateLanguageUI(document.getElementById("lang-select").value);
+   // Initialize the dashboard 
+  function showAdvancedFeatures() {
+  const choice = prompt(
+    "🚀 Advanced Features:\n\n" +
+    "1. 💖 Show Favorites\n" +
+    "2. 🎯 Get Recommendations\n" +
+    "3. 📋 Order History\n" +
+    "4. 📦 Track Order\n" +
+    "5. ↩️ Return Order\n" +
+    "6. 📚 Show All Books\n" +
+    "7. 🗂 Show All Orders\n\n" +
+    "Enter the number of the feature you want to use:"
+  );
+  switch (choice) {
+    case "1":
+      showFavorites();
+      break;
+    case "2":
+      getRecommendations();
+      break;
+    case "3":
+      showOrderHistory();
+      break;
+    case "4":
+      trackOrder();
+      break;
+    case "5":
+      returnOrder();
+      break;
+    case "6":
+      renderBooks(books);
+      break;
+    case "7":
+      showAllOrders();
+      break;
+    default:
+      if (choice !== null) alert("❌ Invalid choice.");
+  }
+}
+
+const books = [
+  { id: 1, title: "Effective Java", author: "Joshua Bloch", price: 1200, discount: 10, category: "Programming", rating: 4.8, likes: 1025, comments: [] },
+  { id: 2, title: "Head First Java", author: "Kathy Sierra", price: 800, discount: 15, category: "Programming", rating: 4.5, likes: 112, comments: [] },
+  { id: 3, title: "Java: The Complete Reference", author: "Herbert Schildt", price: 750, discount: 10, category: "Programming", rating: 4.6, likes: 89, comments: [] },
+  { id: 4, title: "Java Concurrency", author: "Brian Goetz", price: 900,discount: 12, category: "Programming", rating: 4.7, likes: 67, comments: [] },
+  { id: 5, title: "Clean Code", author: "Robert C. Martin", price: 950,discount: 11, category: "Software Engineering", rating: 4.9, likes: 203, comments: [] },
+  { id: 6, title: "Spring in Action", author: "Craig Walls", price: 890,discount: 18, category: "Development", rating: 4.4, likes: 78, comments: [] },
+  { id: 7, title: "Java Performance", author: "Scott Oaks", price: 780, category: "Programming", rating: 4.3, likes: 45, comments: [] },
+  { id: 8, title: "Thinking in Java", author: "Bruce Eckel", price: 670, category: "Programming", rating: 4.5, likes: 92, comments: [] },
+  { id: 9, title: "Java Puzzlers", author: "Joshua Bloch", price: 720, category: "Programming", rating: 4.2, likes: 56, comments: [] },
+  { id: 10, title: "Test-Driven Development", author: "Kent Beck", price: 580, category: "Testing", rating: 4.6, likes: 134, comments: [] },
+  
+  // Math Books
+  { id: 11, title: "Calculus: Early Transcendentals", author: "James Stewart", price: 1200, category: "Mathematics", rating: 4.4, likes: 89, comments: [] },
+  { id: 12, title: "Linear Algebra and Its Applications", author: "Gilbert Strang", price: 950, category: "Mathematics", rating: 4.7, likes: 156, comments: [] },
+  { id: 13, title: "Introduction to Mathematical Thinking", author: "Keith Devlin", price: 680, category: "Mathematics", rating: 4.5, likes: 78, comments: [] },
+  { id: 14, title: "Discrete Mathematics", author: "Kenneth Rosen", price: 890, category: "Mathematics", rating: 4.3, likes: 67, comments: [] },
+  { id: 15, title: "Statistics: The Art and Science", author: "Alan Agresti", price: 1100, category: "Mathematics", rating: 4.6, likes: 92, comments: [] },
+  { id: 16, title: "Abstract Algebra", author: "David Dummit", price: 1300, category: "Mathematics", rating: 4.8, likes: 124, comments: [] },
+  { id: 17, title: "Real Analysis", author: "Walter Rudin", price: 980, category: "Mathematics", rating: 4.5, likes: 89, comments: [] },
+  { id: 18, title: "Number Theory", author: "George Andrews", price: 850, category: "Mathematics", rating: 4.4, likes: 67, comments: [] },
+  { id: 19, title: "Mathematical Proofs", author: "Gary Chartrand", price: 720, category: "Mathematics", rating: 4.3, likes: 78, comments: [] },
+  { id: 20, title: "Applied Mathematics", author: "J. David Logan", price: 1050, category: "Mathematics", rating: 4.6, likes: 94, comments: [] },
+
+  // English Books
+  { id: 21, title: "Pride and Prejudice", author: "Jane Austen", price: 450, category: "English Literature", rating: 4.7, likes: 267, comments: [] },
+  { id: 22, title: "To Kill a Mockingbird", author: "Harper Lee", price: 380, category: "English Literature", rating: 4.8, likes: 312, comments: [] },
+  { id: 23, title: "1984", author: "George Orwell", price: 420, category: "English Literature", rating: 4.9, likes: 398, comments: [] },
+  { id: 24, title: "The Great Gatsby", author: "F. Scott Fitzgerald", price: 350, category: "English Literature", rating: 4.5, likes: 189, comments: [] },
+  { id: 25, title: "Hamlet", author: "William Shakespeare", price: 320, category: "English Literature", rating: 4.6, likes: 234, comments: [] },
+  { id: 26, title: "Jane Eyre", author: "Charlotte Brontë", price: 400, category: "English Literature", rating: 4.4, likes: 156, comments: [] },
+  { id: 27, title: "Wuthering Heights", author: "Emily Brontë", price: 380, category: "English Literature", rating: 4.3, likes: 123, comments: [] },
+  { id: 28, title: "Lord of the Flies", author: "William Golding", price: 360, category: "English Literature", rating: 4.2, likes: 167, comments: [] },
+  { id: 29, title: "The Catcher in the Rye", author: "J.D. Salinger", price: 390, category: "English Literature", rating: 4.1, likes: 145, comments: [] },
+  { id: 30, title: "Brave New World", author: "Aldous Huxley", price: 410, category: "English Literature", rating: 4.5, likes: 198, comments: [] },
+
+  // History Books
+  { id: 31, title: "A Brief History of Time", author: "Stephen Hawking", price: 500, category: "History", rating: 4.8, likes: 210, comments: [] },
+{ id: 32, title: "Guns, Germs, and Steel", author: "Jared Diamond", price: 480, category: "History", rating: 4.7, likes: 180, comments: [] },
+{ id: 33, title: "Sapiens: A Brief History of Humankind", author: "Yuval Noah Harari", price: 550, category: "History", rating: 4.9, likes: 320, comments: [] },
+{ id: 34, title: "The Silk Roads", author: "Peter Frankopan", price: 470, category: "History", rating: 4.6, likes: 150, comments: [] },
+{ id: 35, title: "The History of the Ancient World", author: "Susan Wise Bauer", price: 600, category: "History", rating: 4.5, likes: 110, comments: [] },
+{ id: 36, title: "Postwar: A History of Europe Since 1945", author: "Tony Judt", price: 650, category: "History", rating: 4.7, likes: 95, comments: [] },
+{ id: 37, title: "The Wright Brothers", author: "David McCullough", price: 430, category: "History", rating: 4.4, likes: 80, comments: [] },
+{ id: 38, title: "Team of Rivals", author: "Doris Kearns Goodwin", price: 520, category: "History", rating: 4.8, likes: 140, comments: [] },
+{ id: 39, title: "The Diary of a Young Girl", author: "Anne Frank", price: 390, category: "History", rating: 4.9, likes: 200, comments: [] },
+{ id: 40, title: "The Crusades: The Authoritative History", author: "Thomas Asbridge", price: 570, category: "History", rating: 4.5, likes: 75, comments: [] },
+
+// Geography Boooks
+{ id: 41, title: "Prisoners of Geography", author: "Tim Marshall", price: 420, category: "Geography", rating: 4.7, likes: 160, comments: [] },
+{ id: 42, title: "Geography of India", author: "Majid Husain", price: 480, category: "Geography", rating: 4.6, likes: 120, comments: [] },
+{ id: 43, title: "The Power of Geography", author: "Tim Marshall", price: 450, category: "Geography", rating: 4.8, likes: 130, comments: [] },
+{ id: 44, title: "World Regional Geography", author: "Caitlin Finlayson", price: 510, category: "Geography", rating: 4.5, likes: 90, comments: [] },
+{ id: 45, title: "Physical Geography", author: "James Petersen", price: 530, category: "Geography", rating: 4.4, likes: 85, comments: [] },
+{ id: 46, title: "Human Geography", author: "Erin H. Fouberg", price: 490, category: "Geography", rating: 4.6, likes: 100, comments: [] },
+{ id: 47, title: "Geography of the World", author: "DK", price: 560, category: "Geography", rating: 4.7, likes: 110, comments: [] },
+{ id: 48, title: "The Geography of Thought", author: "Richard E. Nisbett", price: 470, category: "Geography", rating: 4.5, likes: 95, comments: [] },
+{ id: 49, title: "Introduction to Geography", author: "Carl Dahlman", price: 520, category: "Geography", rating: 4.3, likes: 70, comments: [] },
+{ id: 50, title: "Geography: Realms, Regions, and Concepts", author: "H.J. de Blij", price: 600, category: "Geography", rating: 4.6, likes: 105, comments: [] },
+
+// Science Books
+{ id: 51, title: "A Short History of Nearly Everything", author: "Bill Bryson", price: 540, category: "Science", rating: 4.8, likes: 210, comments: [] },
+{ id: 52, title: "The Selfish Gene", author: "Richard Dawkins", price: 480, category: "Science", rating: 4.7, likes: 180, comments: [] },
+{ id: 53, title: "Cosmos", author: "Carl Sagan", price: 600, category: "Science", rating: 4.9, likes: 320, comments: [] },
+{ id: 54, title: "The Gene: An Intimate History", author: "Siddhartha Mukherjee", price: 570, category: "Science", rating: 4.6, likes: 150, comments: [] },
+{ id: 55, title: "The Elegant Universe", author: "Brian Greene", price: 650, category: "Science", rating: 4.7, likes: 95, comments: [] },
+{ id: 56, title: "The Immortal Life of Henrietta Lacks", author: "Rebecca Skloot", price: 430, category: "Science", rating: 4.8, likes: 140, comments: [] },
+{ id: 57, title: "Astrophysics for People in a Hurry", author: "Neil deGrasse Tyson", price: 390, category: "Science", rating: 4.9, likes: 200, comments: [] },
+{ id: 58, title: "The Emperor of All Maladies", author: "Siddhartha Mukherjee", price: 520, category: "Science", rating: 4.8, likes: 140, comments: [] },
+{ id: 59, title: "The Sixth Extinction", author: "Elizabeth Kolbert", price: 470, category: "Science", rating: 4.5, likes: 95, comments: [] },
+{ id: 60, title: "Surely You're Joking, Mr. Feynman!", author: "Richard Feynman", price: 510, category: "Science", rating: 4.7, likes: 110, comments: [] },
+];
+
+let cart = [];
+let currentBooks = [...books];
+
+const bookList = document.getElementById("book-list");
+const cartItems = document.getElementById("cart-items");
+const totalPrice = document.getElementById("total-price");
+
+function updateDashboard() {
+  document.getElementById("total-books").textContent = currentBooks.length;
+  document.getElementById("cart-count").textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+  document.getElementById("dashboard-total").textContent = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  
+  const uniqueCategories = [...new Set(books.map(book => book.category))];
+  document.getElementById("book-types").textContent = uniqueCategories.length;
+  document.getElementById("order-count").textContent = orderHistory.length;
+  document.getElementById("favorite-count").textContent = favorites.length;
+}
+// function showDashboardFeatures() {
+//   const choice = prompt(
+//     "📊 Dashboard Features:\n\n" +
+//     "1. 📚 Total Books\n" +
+//     "2. 🛒 Items in Cart\n" +
+//     "3. 💰 Cart Value\n" +
+//     "4. 📂 Book Categories\n" +
+//     "5. 📝 Orders Placed\n" +
+//     "6. 💖 Favorite Books\n\n" +
+//     "Enter the number of the feature you want to view:"
+//   );
+//   switch (choice) {
+//     case "1":
+//       alert(`Total Books: ${currentBooks.length}`);
+//       break;
+//     case "2":
+//       alert(`Items in Cart: ${cart.reduce((sum, item) => sum + item.qty, 0)}`);
+//       break;
+//     case "3":
+//       alert(`Cart Value: ₹${cart.reduce((sum, item) => sum + (item.price * item.qty), 0)}`);
+//       break;
+//     case "4":
+//       const uniqueCategories = [...new Set(books.map(book => book.category))];
+//       alert(`Book Categories (${uniqueCategories.length}):\n${uniqueCategories.join(", ")}`);
+//       break;
+//     case "5":
+//       alert(`Orders Placed: ${orderHistory.length}`);
+//       break;
+//     case "6":
+//       alert(`Favorite Books: ${favorites.length}`);
+//       break;
+//     default:
+//       if (choice !== null) alert("❌ Invalid choice.");
+//   }
+// }
+
+function renderBooks(bookArray) {
+  currentBooks = bookArray;
+  bookList.innerHTML = "";
+  bookArray.forEach(book => {
+    const isFavorite = favorites.includes(book.id);
+    const userLiked = userLikes.includes(book.id);
+    const userRating = userRatings[book.id] || 0;
+    // Calculate discounted price if discount exists
+    const hasDiscount = book.discount && book.discount > 0;
+    const discountedPrice = hasDiscount ? Math.round(book.price * (1 - book.discount / 100)) : book.price;
+
+    const div = document.createElement("div");
+    div.className = "book";
+    div.innerHTML = `
+      <h3>${book.title}</h3>
+      <p><em>${book.author}</em></p>
+      <p><strong>Category:</strong> ${book.category}</p>
+      <p>
+        Price: 
+        ${hasDiscount 
+          ? `<span style="text-decoration:line-through;color:#888;">₹${book.price}</span> 
+             <span style="color:#e74c3c;font-weight:bold;">₹${discountedPrice}</span>
+             <span style="color:#27ae60;font-size:13px;"> (${book.discount}% OFF)</span>`
+          : `₹${book.price}`
+        }
+      </p>
+      <div style="margin: 10px 0;">
+        <p>⭐ Rating: ${book.rating}/5.0 | 👍 ${book.likes} likes | 💬 ${book.comments.length} comments</p>
+        ${userRating > 0 ? `<p style="color: #007bff;">Your Rating: ${generateStars(userRating)}</p>` : ''}
+      </div>
+      <div style="margin: 10px 0;">
+        <button onclick="addToCart(${book.id})">🛒 Buy</button>
+        <button onclick="toggleFavorite(${book.id})" style="background: ${isFavorite ? '#e74c3c' : '#f39c12'};">
+          ${isFavorite ? '❤️' : '🤍'}
+        </button>
+        <button onclick="toggleLike(${book.id})" style="background: ${userLiked ? '#e74c3c' : '#6c757d'};">
+          ${userLiked ? '👍' : '👍'} ${userLiked ? 'Liked' : 'Like'}
+        </button>
+      </div>
+      <div style="margin: 5px 0;">
+        <button onclick="rateBook(${book.id})" style="background: #17a2b8; color: white;">⭐ Rate Book</button>
+        <button onclick="commentOnBook(${book.id})" style="background: #28a745; color: white;">💬 Comment</button>
+        <button onclick="viewComments(${book.id})" style="background: #6c757d; color: white;">View Comments</button>
+      </div>
+    `;
+    bookList.appendChild(div);
+  });
+  updateDashboard();
+}
+
+function addToCart(bookId) {
+  const existing = cart.find(item => item.id === bookId);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    const book = books.find(b => b.id === bookId);
+    cart.push({ ...book, qty: 1 });
+  }
+  updateCart();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateCart();
+}
+
+function updateCart() {
+  cartItems.innerHTML = "";
+  let total = 0;
+  cart.forEach((item, index) => {
+    const hasDiscount = item.discount && item.discount > 0;
+    const discountedPrice = hasDiscount ? Math.round(item.price * (1 - item.discount / 100)) : item.price;
+    total += discountedPrice * item.qty;
+    const li = document.createElement("li");
+    li.innerHTML = `${item.title} x ${item.qty} - ₹${discountedPrice * item.qty}
+      <button class="remove-btn" onclick="removeItem(${index})">Remove</button>`;
+    cartItems.appendChild(li);
+  });
+  totalPrice.textContent = total;
+  updateDashboard();
+}function renderBooks(bookArray) {
+  currentBooks = bookArray;
+  bookList.innerHTML = "";
+  bookArray.forEach(book => {
+    const isFavorite = favorites.includes(book.id);
+    const userLiked = userLikes.includes(book.id);
+    const userRating = userRatings[book.id] || 0;
+    // Calculate discounted price if discount exists
+    const hasDiscount = book.discount && book.discount > 0;
+    const discountedPrice = hasDiscount ? Math.round(book.price * (1 - book.discount / 100)) : book.price;
+
+    const div = document.createElement("div");
+    div.className = "book";
+    div.innerHTML = `
+      <h3>${book.title}</h3>
+      <p><em>${book.author}</em></p>
+      <p><strong>Category:</strong> ${book.category}</p>
+      <p>
+        Price: 
+        ${hasDiscount 
+          ? `<span style="text-decoration:line-through;color:#888;">₹${book.price}</span> 
+             <span style="color:#e74c3c;font-weight:bold;">₹${discountedPrice}</span>
+             <span style="color:#27ae60;font-size:13px;"> (${book.discount}% OFF)</span>`
+          : `₹${book.price}`
+        }
+      </p>
+      <div style="margin: 10px 0;">
+        <p>⭐ Rating: ${book.rating}/5.0 | 👍 ${book.likes} likes | 💬 ${book.comments.length} comments</p>
+        ${userRating > 0 ? `<p style="color: #007bff;">Your Rating: ${generateStars(userRating)}</p>` : ''}
+      </div>
+      <div style="margin: 10px 0;">
+        <button onclick="addToCart(${book.id})">🛒 Buy</button>
+        <button onclick="toggleFavorite(${book.id})" style="background: ${isFavorite ? '#e74c3c' : '#f39c12'};">
+          ${isFavorite ? '❤️' : '🤍'}
+        </button>
+        <button onclick="toggleLike(${book.id})" style="background: ${userLiked ? '#e74c3c' : '#6c757d'};">
+          ${userLiked ? '👍' : '👍'} ${userLiked ? 'Liked' : 'Like'}
+        </button>
+      </div>
+      <div style="margin: 5px 0;">
+        <button onclick="rateBook(${book.id})" style="background: #17a2b8; color: white;">⭐ Rate Book</button>
+        <button onclick="commentOnBook(${book.id})" style="background: #28a745; color: white;">💬 Comment</button>
+        <button onclick="viewComments(${book.id})" style="background: #6c757d; color: white;">View Comments</button>
+      </div>
+    `;
+    bookList.appendChild(div);
+  });
+  updateDashboard();
+}function renderBooks(bookArray) {
+  currentBooks = bookArray;
+  bookList.innerHTML = "";
+  bookArray.forEach(book => {
+    const isFavorite = favorites.includes(book.id);
+    const userLiked = userLikes.includes(book.id);
+    const userRating = userRatings[book.id] || 0;
+    // Calculate discounted price if discount exists
+    const hasDiscount = book.discount && book.discount > 0;
+    const discountedPrice = hasDiscount ? Math.round(book.price * (1 - book.discount / 100)) : book.price;
+
+    const div = document.createElement("div");
+    div.className = "book";
+    div.innerHTML = `
+      <h3>${book.title}</h3>
+      <p><em>${book.author}</em></p>
+      <p><strong>Category:</strong> ${book.category}</p>
+      <p>
+        Price: 
+        ${hasDiscount 
+          ? `<span style="text-decoration:line-through;color:#888;">₹${book.price}</span> 
+             <span style="color:#e74c3c;font-weight:bold;">₹${discountedPrice}</span>
+             <span style="color:#27ae60;font-size:13px;"> (${book.discount}% OFF)</span>`
+          : `₹${book.price}`
+        }
+      </p>
+      <div style="margin: 10px 0;">
+        <p>⭐ Rating: ${book.rating}/5.0 | 👍 ${book.likes} likes | 💬 ${book.comments.length} comments</p>
+        ${userRating > 0 ? `<p style="color: #007bff;">Your Rating: ${generateStars(userRating)}</p>` : ''}
+      </div>
+      <div style="margin: 10px 0;">
+        <button onclick="addToCart(${book.id})">🛒 Buy</button>
+        <button onclick="toggleFavorite(${book.id})" style="background: ${isFavorite ? '#e74c3c' : '#f39c12'};">
+          ${isFavorite ? '❤️' : '🤍'}
+        </button>
+        <button onclick="toggleLike(${book.id})" style="background: ${userLiked ? '#e74c3c' : '#6c757d'};">
+          ${userLiked ? '👍' : '👍'} ${userLiked ? 'Liked' : 'Like'}
+        </button>
+      </div>
+      <div style="margin: 5px 0;">
+        <button onclick="rateBook(${book.id})" style="background: #17a2b8; color: white;">⭐ Rate Book</button>
+        <button onclick="commentOnBook(${book.id})" style="background: #28a745; color: white;">💬 Comment</button>
+        <button onclick="viewComments(${book.id})" style="background: #6c757d; color: white;">View Comments</button>
+      </div>
+    `;
+    bookList.appendChild(div);
+  });
+  updateDashboard();
+}
+
+function clearCart() {
+  cart = [];
+  updateCart();
+  updateDashboard();
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert("Your cart is empty.");
+    return;
+  }
+  
+  const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+  
+  // Show purchase options
+  const paymentMethod = prompt(`💳 Select Payment Method:\n\n1. Credit/Debit Card\n2. UPI/Digital Wallet\n3. Net Banking\n4. Cash on Delivery\n\nEnter option number (1-4):`);
+  
+  if (!paymentMethod || !['1', '2', '3', '4'].includes(paymentMethod)) {
+    alert("❌ Invalid payment method selected.");
+    return;
+  }
+  
+  const paymentMethods = {
+    '1': 'Credit/Debit Card',
+    '2': 'UPI/Digital Wallet', 
+    '3': 'Net Banking',
+    '4': 'Cash on Delivery'
+  };
+  
+  // Get delivery details
+  const deliveryOption = prompt(`🚚 Select Delivery Option:\n\n1. Standard Delivery (5-7 days) - FREE\n2. Express Delivery (2-3 days) - ₹99\n3. Same Day Delivery (within 24 hours) - ₹199\n\nEnter option number (1-3):`);
+  
+  if (!deliveryOption || !['1', '2', '3'].includes(deliveryOption)) {
+    alert("❌ Invalid delivery option selected.");
+    return;
+  }
+  
+  const deliveryOptions = {
+    '1': { name: 'Standard Delivery (5-7 days)', cost: 0 },
+    '2': { name: 'Express Delivery (2-3 days)', cost: 99 },
+    '3': { name: 'Same Day Delivery (within 24 hours)', cost: 199 }
+  };
+  
+  const selectedDelivery = deliveryOptions[deliveryOption];
+  const finalTotal = total + selectedDelivery.cost;
+  
+  // Get delivery address
+  const address = prompt("📍 Enter your delivery address:");
+  if (!address || address.trim() === "") {
+    alert("❌ Delivery address is required.");
+    return;
+  }
+  
+  // Process payment (simulation)
+  if (paymentMethod !== '4') {
+    const confirm = window.confirm(`💳 Payment Summary:\n\nItems Total: ₹${total}\nDelivery: ₹${selectedDelivery.cost}\nFinal Total: ₹${finalTotal}\n\nPayment Method: ${paymentMethods[paymentMethod]}\nDelivery: ${selectedDelivery.name}\nAddress: ${address}\n\nConfirm payment?`);
+    
+    if (!confirm) {
+      alert("❌ Payment cancelled.");
+      return;
+    }
+  }
+  
+  // Generate order number
+  const orderNumber = Date.now();
+  
+  // Add to order history
+  addToOrderHistory(orderNumber, finalTotal, itemCount, paymentMethods[paymentMethod], selectedDelivery.name, address);
+  
+  // Success message
+  alert(`✅ Order Placed Successfully!\n\nOrder #${orderNumber}\nPayment: ${paymentMethods[paymentMethod]}\nDelivery: ${selectedDelivery.name}\nTotal: ₹${finalTotal}\n\nYour books will be delivered to:\n${address}\n\nThank you for your purchase!`);
+  
+  clearCart();
+}
+
+function filterBooks() {
+  const searchQuery = document.getElementById("search").value.toLowerCase();
+  const categoryFilter = document.getElementById("category-filter").value;
+  const sortOption = document.getElementById("sort").value;
+  
+  let filtered = books.filter(book => {
+    const matchesSearch = book.title.toLowerCase().includes(searchQuery) || 
+                         book.author.toLowerCase().includes(searchQuery);
+    const matchesCategory = categoryFilter === "" || book.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+  
+  if (sortOption === "asc") {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (sortOption === "desc") {
+    filtered.sort((a, b) => b.price - a.price);
+  }
+  
+  renderBooks(filtered);
+}
+
+document.getElementById("search").addEventListener("input", filterBooks);
+document.getElementById("sort").addEventListener("change", filterBooks);
+document.getElementById("category-filter").addEventListener("change", filterBooks);
+
+
+
+// Advanced Features
+let orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+let userLikes = JSON.parse(localStorage.getItem('userLikes')) || [];
+let userRatings = JSON.parse(localStorage.getItem('userRatings')) || {};
+
+function generateStars(rating) {
+  const fullStars = '⭐'.repeat(Math.floor(rating));
+  const halfStar = (rating % 1 !== 0) ? '⭐' : '';
+  return fullStars + halfStar;
+}function showAdvancedFeatures() {
+  const choice = prompt(
+    "🚀 Advanced Features:\n\n" +
+    "1. 💖 Show Favorites\n" +
+    "2. 🎯 Get Recommendations\n" +
+    "3. 📋 Order History\n" +
+    "4. 📦 Track Order\n" +
+    "5. ↩️ Return Order\n" +
+    "6. 📚 Show All Books\n" +
+    "7. 🗂 Show All Orders\n" +
+    "8. 👍 Most Liked Book\n" +
+    "9. ⭐ Highest Rated Book\n" +
+    "10. 💬 Books with Comments\n" +
+    "11. 🛒 Cart Summary\n" +
+    "12. 👍 Total Likes\n" +
+    "13. 💬 Total Comments\n" +
+    "14. 🆕 Recently Added Books\n" +
+    "15. 📂 Books by Category\n" +
+    "16. 👨‍💼 Favorite Authors\n" +
+    "17. 💬 Book with Most Comments\n\n" +
+    "Enter the number of the feature you want to use:"
+  );
+  switch (choice) {
+    case "1": showFavorites(); break;
+    case "2": getRecommendations(); break;
+    case "3": showOrderHistory(); break;
+    case "4": trackOrder(); break;
+    case "5": returnOrder(); break;
+    case "6": renderBooks(books); break;
+    case "7": showAllOrders(); break;
+    case "8": showMostLikedBook(); break;
+    case "9": showHighestRatedBook(); break;
+    case "10": showBooksWithComments(); break;
+    case "11": showCartSummary(); break;
+    case "12": showTotalLikes(); break;
+    case "13": showTotalComments(); break;
+    case "14": showRecentlyAddedBooks(); break;
+    case "15": showBooksByCategory(); break;
+    case "16": showFavoriteAuthors(); break;
+    case "17": showBookWithMostComments(); break;
+    default:
+      if (choice !== null) alert("❌ Invalid choice.");
+  
+  }
+}// 1. Show Most Liked Book
+function showMostLikedBook() {
+  const mostLiked = books.reduce((max, book) => book.likes > max.likes ? book : max, books[0]);
+  alert(`📚 Most Liked Book:\n${mostLiked.title}\n👍 Likes: ${mostLiked.likes}`);
+}
+
+// 2. Show Highest Rated Book
+function showHighestRatedBook() {
+  const highestRated = books.reduce((max, book) => book.rating > max.rating ? book : max, books[0]);
+  alert(`⭐ Highest Rated Book:\n${highestRated.title}\nRating: ${highestRated.rating}/5`);
+}
+
+// 3. Show Books with Comments
+function showBooksWithComments() {
+  const commentedBooks = books.filter(book => book.comments.length > 0);
+  if (commentedBooks.length === 0) {
+    alert("No books have comments yet.");
+    return;
+  }
+  alert("Books with comments:\n" + commentedBooks.map(b => `${b.title} (${b.comments.length} comments)`).join('\n'));
+}
+
+// 4. Show Cart Summary
+function showCartSummary() {
+  if (cart.length === 0) {
+    alert("Your cart is empty.");
+    return;
+  }
+  let summary = "🛒 Cart Summary:\n";
+  cart.forEach(item => {
+    summary += `${item.title} x${item.qty} = ₹${item.price * item.qty}\n`;
+  });
+  summary += `Total: ₹${cart.reduce((sum, item) => sum + (item.price * item.qty), 0)}`;
+  alert(summary);
+}
+
+// 5. Show Total Likes
+function showTotalLikes() {
+  const totalLikes = books.reduce((sum, book) => sum + (book.likes || 0), 0);
+  alert(`👍 Total Likes for All Books: ${totalLikes}`);
+}
+
+// 6. Show Total Comments
+function showTotalComments() {
+  const totalComments = books.reduce((sum, book) => sum + (book.comments.length || 0), 0);
+  alert(`💬 Total Comments on All Books: ${totalComments}`);
+}
+
+// 7. Show Recently Added Books
+function showRecentlyAddedBooks() {
+  const recent = books.slice(-5).reverse();
+  alert("🆕 Recently Added Books:\n" + recent.map(b => b.title).join('\n'));
+}
+
+// 8. Show Books by Category
+function showBooksByCategory() {
+  const categories = [...new Set(books.map(book => book.category))];
+  let msg = "📂 Books by Category:\n";
+  categories.forEach(cat => {
+    const count = books.filter(b => b.category === cat).length;
+    msg += `${cat}: ${count}\n`;
+  });
+  alert(msg);
+}
+
+// 9. Show Favorite Authors
+function showFavoriteAuthors() {
+  const authorCounts = {};
+  favorites.forEach(id => {
+    const book = books.find(b => b.id === id);
+    if (book) authorCounts[book.author] = (authorCounts[book.author] || 0) + 1;
+  });
+  const sorted = Object.entries(authorCounts).sort((a, b) => b[1] - a[1]);
+  if (sorted.length === 0) {
+    alert("No favorite authors yet.");
+    return;
+  }
+  alert("💖 Favorite Authors:\n" + sorted.map(([author, count]) => `${author}: ${count} favorite books`).join('\n'));
+}
+
+// 10. Show Book with Most Comments
+function showBookWithMostComments() {
+  const mostCommented = books.reduce((max, book) => book.comments.length > max.comments.length ? book : max, books[0]);
+  alert(`💬 Book with Most Comments:\n${mostCommented.title}\nComments: ${mostCommented.comments.length}`);
+
+}
+
+function toggleLike(bookId) {
+  const book = books.find(b => b.id === bookId);
+  if (!book) return;
+  
+  const index = userLikes.indexOf(bookId);
+  if (index > -1) {
+    userLikes.splice(index, 1);
+    book.likes = Math.max(0, book.likes - 1);
+    alert("👍 Like removed!");
+  } else {
+    userLikes.push(bookId);
+    book.likes += 1;
+    alert("👍 Book liked!");
+  }
+  
+  localStorage.setItem('userLikes', JSON.stringify(userLikes));
+  renderBooks(currentBooks);
+}
+
+function rateBook(bookId) {
+  const book = books.find(b => b.id === bookId);
+  if (!book) return;
+  
+  const currentRating = userRatings[bookId] || 0;
+  const newRating = prompt(`Rate "${book.title}" (1-5 stars):\n\nCurrent book rating: ${book.rating}/5.0\n${currentRating > 0 ? `Your current rating: ${currentRating}/5` : 'You haven\'t rated this book yet.'}`, currentRating || '');
+  
+  if (newRating === null) return;
+  
+  const rating = parseFloat(newRating);
+  if (rating >= 1 && rating <= 5) {
+    userRatings[bookId] = rating;
+    localStorage.setItem('userRatings', JSON.stringify(userRatings));
+    alert(`⭐ You rated "${book.title}" ${rating}/5 stars!`);
+    renderBooks(currentBooks);
+  } else {
+    alert('Please enter a rating between 1 and 5.');
+  }
+}
+
+function commentOnBook(bookId) {
+  const book = books.find(b => b.id === bookId);
+  if (!book) return;
+  
+  const comment = prompt(`Write a comment for "${book.title}":`);
+  if (comment && comment.trim()) {
+    const newComment = {
+      id: Date.now(),
+      text: comment.trim(),
+      author: "Anonymous User",
+      date: new Date().toLocaleDateString()
+    };
+    
+    book.comments.unshift(newComment);
+    alert(`💬 Comment added to "${book.title}"!`);
+    renderBooks(currentBooks);
+  }
+}
+
+function viewComments(bookId) {
+  const book = books.find(b => b.id === bookId);
+  if (!book) return;
+  
+  if (book.comments.length === 0) {
+    alert(`No comments yet for "${book.title}". Be the first to comment!`);
+    return;
+  }
+  
+  let commentsText = `💬 Comments for "${book.title}":\n\n`;
+  book.comments.slice(0, 5).forEach((comment, index) => {
+    commentsText += `${index + 1}. ${comment.text}\n   - ${comment.author} (${comment.date})\n\n`;
+  });
+  
+  if (book.comments.length > 5) {
+    commentsText += `... and ${book.comments.length - 5} more comments`;
+  }
+  
+  alert(commentsText);
+}
+
+function addToOrderHistory(orderNumber, total, itemCount, paymentMethod = 'Not specified', deliveryMethod = 'Standard', address = 'Not specified') {
+  const order = {
+    id: orderNumber,
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString(),
+    total: total,
+    items: itemCount,
+    paymentMethod: paymentMethod,
+    deliveryMethod: deliveryMethod,
+    address: address,
+    status: 'Processing',
+    books: [...cart]
+  };
+  
+  orderHistory.unshift(order);
+  localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+  updateDashboard();
+}
+
+function toggleFavorite(bookId) {
+  const index = favorites.indexOf(bookId);
+  if (index > -1) {
+    favorites.splice(index, 1);
+    alert("❤️ Removed from favorites!");
+  } else {
+    favorites.push(bookId);
+    alert("💖 Added to favorites!");
+  }
+  
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+  renderBooks(currentBooks);
+}
+
+function showAllOrders() {
+  if (orderHistory.length === 0) {
+    alert("No order history available.");
+    return;
+  }
+
+  let historyText = "📋 ALL ORDERS PLACED\n\n";
+  orderHistory.forEach(order => {
+    historyText += `Order #${order.id}\n`;
+    historyText += `📅 Date: ${order.date} ${order.time || ''}\n`;
+    historyText += `📦 Items: ${order.items} | Total: ₹${order.total}\n`;
+    historyText += `💳 Payment: ${order.paymentMethod || 'Not specified'}\n`;
+    historyText += `🚚 Delivery: ${order.deliveryMethod || 'Standard'}\n`;
+    historyText += `📍 Address: ${order.address || 'Not specified'}\n`;
+    historyText += `📊 Status: ${order.status || 'Completed'}\n\n`;
+  });
+
+  alert(historyText);
+}
+
+
+function showFavorites() {
+  if (favorites.length === 0) {
+    alert("No favorites added yet.");
+    return;
+  }
+  
+  const favoriteBooks = books.filter(book => favorites.includes(book.id));
+  renderBooks(favoriteBooks);
+  
+  // Add a back button to show all books
+  const backButton = document.createElement("div");
+  backButton.innerHTML = `<button onclick="renderBooks(books)" style="margin: 20px auto; display: block; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">← Show All Books</button>`;
+  bookList.insertBefore(backButton, bookList.firstChild);
+}
+
+function getRecommendations() {
+  if (cart.length === 0) {
+    alert("Add some books to cart to get personalized recommendations!");
+    return;
+  }
+  
+  // Simple recommendation based on categories in cart
+  const cartCategories = [...new Set(cart.map(item => item.category))];
+  const recommendations = books.filter(book => 
+    cartCategories.includes(book.category) && 
+    !cart.some(cartItem => cartItem.id === book.id)
+  ).slice(0, 3);
+  
+  if (recommendations.length === 0) {
+    alert("No recommendations available based on your cart.");
+    return;
+  }
+  
+  renderBooks(recommendations);
+  
+  // Add a back button
+  const backButton = document.createElement("div");
+  backButton.innerHTML = `<button onclick="renderBooks(books)" style="margin: 20px auto; display: block; padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">← Show All Books</button>`;
+  bookList.insertBefore(backButton, bookList.firstChild);
+}
+
+function trackOrder() {
+  if (orderHistory.length === 0) {
+    alert("No orders to track.");
+    return;
+  }
+  
+  const orderNumber = prompt("📦 Enter your order number to track:");
+  if (!orderNumber) return;
+  
+  const order = orderHistory.find(o => o.id.toString() === orderNumber.toString());
+  
+  if (!order) {
+    alert("❌ Order not found. Please check your order number.");
+    return;
+  }
+  
+  // Simulate order status updates
+  const statuses = ['Processing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'];
+  const currentStatusIndex = Math.min(Math.floor((Date.now() - order.id) / (1000 * 60 * 60 * 24)), statuses.length - 1);
+  const currentStatus = statuses[currentStatusIndex];
+  
+  // Update order status
+  order.status = currentStatus;
+  localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+  
+  let trackingInfo = `📦 ORDER TRACKING\n\n`;
+  trackingInfo += `Order #${order.id}\n`;
+  trackingInfo += `📅 Placed: ${order.date} ${order.time || ''}\n`;
+  trackingInfo += `📊 Status: ${currentStatus}\n`;
+  trackingInfo += `🚚 Delivery: ${order.deliveryMethod}\n`;
+  trackingInfo += `📍 Address: ${order.address}\n`;
+  trackingInfo += `💰 Total: ₹${order.total}\n\n`;
+  
+  trackingInfo += `📈 Tracking Progress:\n`;
+  statuses.forEach((status, index) => {
+    if (index <= currentStatusIndex) {
+      trackingInfo += `✅ ${status}\n`;
+    } else {
+      trackingInfo += `⏳ ${status}\n`;
+    }
+  });
+  
+  if (currentStatus === 'Delivered') {
+    trackingInfo += `\n🎉 Your order has been delivered! Thank you for shopping with us.`;
+  } else {
+    trackingInfo += `\n⏰ Estimated delivery: ${getEstimatedDelivery(order.deliveryMethod)}`;
+  }
+  
+  alert(trackingInfo);
+}
+
+function getEstimatedDelivery(deliveryMethod) {
+  const today = new Date();
+  let deliveryDays = 5; // Default
+  
+  if (deliveryMethod && deliveryMethod.includes('Express')) {
+    deliveryDays = 3;
+  } else if (deliveryMethod && deliveryMethod.includes('Same Day')) {
+    deliveryDays = 1;
+  }
+  
+  const deliveryDate = new Date(today.getTime() + (deliveryDays * 24 * 60 * 60 * 1000));
+  return deliveryDate.toLocaleDateString();
+}
+
+function returnOrder() {
+  if (orderHistory.length === 0) {
+    alert("No orders to return.");
+    return;
+  }
+
+  const orderNumber = prompt("↩️ Enter your order number to return:");
+  if (!orderNumber) return;
+
+  const order = orderHistory.find(o => o.id.toString() === orderNumber.toString());
+
+  if (!order) {
+    alert("❌ Order not found. Please check your order number.");
+    return;
+  }
+
+  if (order.status === "Returned") {
+    alert("🔁 This order has already been returned.");
+    return;
+  }
+
+  // Only allow return if delivered and within 7 days of delivery
+  const statuses = ['Processing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'];
+  const deliveredIndex = statuses.indexOf('Delivered');
+  const currentStatusIndex = Math.min(Math.floor((Date.now() - order.id) / (1000 * 60 * 60 * 24)), statuses.length - 1);
+
+  if (currentStatusIndex < deliveredIndex) {
+    alert("🚚 You can only return orders that have been delivered.");
+    return;
+  }
+
+   // Check if within 7 days of delivery
+  const orderDate = new Date(order.id * 1);
+  const now = new Date();
+  const daysSinceOrder = Math.floor((now - orderDate) / (1000 * 60 * 60 * 24));
+  if (daysSinceOrder > 7) {
+    alert("⏳ Return period expired. Orders can only be returned within 7 days of delivery.");
+    return;
+  }
+  // Ask for return reason
+  const reason = prompt(
+    "Please tell us why you want to return this order:\n" +
+    "1. Wrong item delivered\n" +
+    "2. Item damaged/defective\n" +
+    "3. Ordered by mistake\n" +
+    "4. Better price available elsewhere\n" +
+    "5. Other (please specify)"
+  );
+  if (!reason || reason.trim() === "") {
+    alert("❌ Return reason is required.");
+    return;
+  }
+
+  const confirmReturn = confirm(`Are you sure you want to return Order #${order.id}?\nThis action cannot be undone.`);
+  if (!confirmReturn) return;
+
+  order.status = "Returned";
+  localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+  updateDashboard();
+
+  alert(`✅ Order #${order.id} has been marked as Returned.\nOur team will contact you for pickup and refund.`);
+}
+// Initialize the app
+renderBooks(books);
+
+// Flashlight effect toggle (press "F" to toggle)
+document.addEventListener('mousemove', function(e) {
+  const overlay = document.getElementById('flashlight-overlay');
+  overlay.style.setProperty('--x', e.clientX + 'px');
+  overlay.style.setProperty('--y', e.clientY + 'px');
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key.toLowerCase() === 'f') {
+    document.body.classList.toggle('flashlight-on');
+  }
+});
+document.body.classList.remove('flashlight-on');
+
+// Dark/Light mode toggle
+document.getElementById("theme-toggle").addEventListener("click", function() {
+  document.body.classList.toggle("dark-mode");
+  if (document.body.classList.contains("dark-mode")) {
+    this.textContent = "☀️ Light Mode";
+  } else {
+    this.textContent = "🌙 Dark Mode";
+  }
+});
+</script>
+</body>
+</html>
