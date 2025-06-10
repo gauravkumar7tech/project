@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Landing Page</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header id="header">
+    <img id="header-img" src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="Logo" />
+    <nav id="nav-bar">
+      <a class="nav-link" href="#features">Features</a>
+      <a class="nav-link" href="#how-it-works">How It Works</a>
+      <a class="nav-link" href="#pricing">Pricing</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="features">
+      <h2>Features</h2>
+      <ul>
+        <li>Fast performance</li>
+        <li>Easy integration</li>
+        <li>Fully customizable</li>
+      </ul>
+    </section>
+
+    <section id="how-it-works">
+      <h2>How It Works</h2>
+      <p>Watch the video to learn more about how our product works.</p>
+      <iframe id="video" width="560" height="315" src="https://www.youtube.com/embed/dGcsHMXbSOA" title="YouTube video" frameborder="0" allowfullscreen></iframe>
+    </section>
+
+    <section id="pricing">
+      <h2>Pricing</h2>
+      <div class="pricing-box">
+        <div>
+          <h3>Basic</h3>
+          <p>$9.99/month</p>
+        </div>
+        <div>
+          <h3>Pro</h3>
+          <p>$19.99/month</p>
+        </div>
+        <div>
+          <h3>Enterprise</h3>
+          <p>$49.99/month</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="newsletter">
+      <h2>Subscribe for Updates</h2>
+      <form id="form" action="https://www.freecodecamp.com/email-submit">
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        <input type="submit" id="submit" value="Subscribe" />
+      </form>
+    </section>
+  </main>
+
+</body>
+</html>
+
+
+<style>
+/* General Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+#header-img {
+  width: 50px;
+  height: 50px;
+}
+
+#nav-bar {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+}
+
+main {
+  padding-top: 100px;
+  max-width: 960px;
+  margin: auto;
+  padding: 100px 20px 50px;
+}
+
+section {
+  margin-bottom: 60px;
+}
+
+#video {
+  width: 100%;
+  max-width: 560px;
+  height: 315px;
+  display: block;
+  margin: 20px auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#email, #submit {
+  padding: 10px;
+  font-size: 1rem;
+}
+
+#submit {
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#submit:hover {
+  background-color: #555;
+}
+
+.pricing-box {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pricing-box div {
+  background: #fff;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  flex: 1 1 200px;
+  text-align: center;
+}
+
+/* Media Query */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+  }
+
+  #nav-bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pricing-box {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+</style>
